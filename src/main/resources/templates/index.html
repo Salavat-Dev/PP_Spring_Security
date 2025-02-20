@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+</head>
+<body>
+<div sec:authorize="isAnonymous()">
+    <h1>Добро пожаловать на сайт!</h1>
+    <p>Для продолжения, пожалуйста, выберите одно из следующих действий:</p>
+    <a href="/login">Войти</a> | <a href="/registration">Зарегистрироваться</a>
+</div>
+
+<div sec:authorize="isAuthenticated()">
+    <div style="position: absolute; top: 10px; right: 10px;">
+        <a href="/logout" style="color: red; text-decoration: none;">Выйти</a>
+    </div>
+    <h1>Добро пожаловать, <span sec:authentication="name"></span>!</h1>
+    <p>Ваши роли: <span sec:authentication="authorities"></span></p>
+    <p>Выберите раздел:</p>
+    <a href="/user" sec:authorize="hasRole('USER')">Личный кабинет</a>
+    <a href="/admin" sec:authorize="hasRole('ADMIN')">Админ-панель</a>
+</div>
+</body>
+</html>

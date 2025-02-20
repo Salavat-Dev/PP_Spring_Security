@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<h1>Добро пожаловать, <span th:text="${username}">Username</span>!</h1>
+<p>Роли: <span th:text="${roles}">Roles</span></p>
+
+<h2>Список всех пользователей:</h2>
+<ul>
+    <li th:each="user : ${users}">
+        <div>
+            <strong>Логин:</strong> <span th:text="${user.username}"></span><br/>
+            <strong>Роли:</strong>
+            <span th:if="${user.roles.isEmpty()}">Нет ролей</span>
+            <ul th:unless="${user.roles.isEmpty()}">
+                <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+            </ul>
+        </div>
+        <hr/>
+    </li>
+</ul>
+<a href="/">На главную</a>
+<div style="position: absolute; top: 10px; right: 10px;">
+    <a href="/logout" style="color: red; text-decoration: none;">Выйти</a>
+</div>
+</body>
+</html>
