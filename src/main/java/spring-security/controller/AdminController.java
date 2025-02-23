@@ -1,20 +1,17 @@
-package SpringSecurityBoot.Controller;
+package SpringSecurityBoot.controller;
 
-import SpringSecurityBoot.Entity.Role;
-import SpringSecurityBoot.Entity.User;
-import SpringSecurityBoot.Repository.UserRepository;
+import SpringSecurityBoot.entity.User;
+import SpringSecurityBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class AdminController {
@@ -33,7 +30,9 @@ public class AdminController {
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
         model.addAttribute("username", username);
-        model.addAttribute("roles", authorities);
+        model.addAttribute("roles", authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(", ")));
 
         List<User> users = userRepository.findAll();
 

@@ -1,7 +1,7 @@
-package SpringSecurityBoot.Controller;
+package SpringSecurityBoot.controller;
 
-import SpringSecurityBoot.Entity.User;
-import SpringSecurityBoot.Repository.UserRepository;
+import SpringSecurityBoot.entity.User;
+import SpringSecurityBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -36,7 +37,9 @@ public class UserController {
         // Добавляем информацию о текущем пользователе в модель
         model.addAttribute("username", currentUser.get().getUsername());
         model.addAttribute("email", currentUser.get().getEmail());
-        model.addAttribute("roles", authorities);
+        model.addAttribute("roles", authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(", ")));
 
         return "user";  // Шаблон user.html
     }

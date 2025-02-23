@@ -1,8 +1,10 @@
-package SpringSecurityBoot.Service;
+package SpringSecurityBoot.service;
 
-import SpringSecurityBoot.Entity.Role;
-import SpringSecurityBoot.Entity.User;
-import SpringSecurityBoot.Repository.UserRepository;
+import SpringSecurityBoot.entity.Role;
+import SpringSecurityBoot.entity.User;
+import SpringSecurityBoot.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private UserRepository userRepository;
     @Autowired
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -20,9 +25,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        // Используем EntityManager для выполнения кастомного запроса
+        User user = entityManager.createQuery(
+                        "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .getSingleResult();
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), AuthorityUtils.createAuthorityList(user.getRoles().stream()
